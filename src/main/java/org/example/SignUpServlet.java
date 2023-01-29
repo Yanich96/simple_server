@@ -6,13 +6,15 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
+import java.sql.SQLException;
 
 public class SignUpServlet extends HttpServlet {
-    private final AccountService accountService;
+    private final Database database;
 
-    SignUpServlet(AccountService accountService)
+
+    SignUpServlet(Database db)
     {
-        this.accountService = accountService;
+        this.database = db;
     }
 
     @Override
@@ -20,7 +22,11 @@ public class SignUpServlet extends HttpServlet {
         String login = req.getParameter("login");
         String password = req.getParameter("password");
         UserProfile user = new UserProfile(login, password);
-        accountService.addNewUser(user);
+        try {
+            database.insertToDB(user);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 }

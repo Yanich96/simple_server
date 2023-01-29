@@ -8,11 +8,13 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 public class SignInServlet extends HttpServlet {
-    private final AccountService accountService;
+//    private final AccountService accountService;
+    private final Database database;
 
-    SignInServlet(AccountService accountService)
+
+    SignInServlet(Database db)
     {
-        this.accountService = accountService;
+        this.database = db;
     }
 
     @Override
@@ -20,7 +22,7 @@ public class SignInServlet extends HttpServlet {
         String login = req.getParameter("login");
         String password = req.getParameter("password");
         UserProfile user = new UserProfile(login, password);
-        boolean registered = accountService.findUser(user);
+        boolean registered = database.checkUser(user);
         if(registered)
             resp.getWriter().print("Authorized: "+login);
         else
