@@ -1,6 +1,5 @@
 package org.example;
 
-import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -8,13 +7,12 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 public class SignInServlet extends HttpServlet {
-//    private final AccountService accountService;
-    private final Database database;
+    private final AccountService accountService;
 
 
-    SignInServlet(Database db)
+    SignInServlet()
     {
-        this.database = db;
+        this.accountService = Context.getContext().get(AccountService.class);
     }
 
     @Override
@@ -22,7 +20,7 @@ public class SignInServlet extends HttpServlet {
         String login = req.getParameter("login");
         String password = req.getParameter("password");
         UserProfile user = new UserProfile(login, password);
-        boolean registered = database.checkUser(user);
+        boolean registered = accountService.authenticate(user);
         if(registered)
             resp.getWriter().print("Authorized: "+login);
         else
@@ -30,9 +28,5 @@ public class SignInServlet extends HttpServlet {
             resp.getWriter().print("Unauthorized");
             resp.setStatus(401);
         }
-
-
     }
-
-
 }
