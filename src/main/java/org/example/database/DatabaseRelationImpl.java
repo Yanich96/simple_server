@@ -1,46 +1,41 @@
-package org.example;
+package org.example.database;
 
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.h2.jdbcx.JdbcDataSource;
 
 import java.sql.*;
 
-public class DatabaseRelationImpl implements Database{
-
+public class DatabaseRelationImpl implements Database {
+    private static final Logger logger = LogManager.getLogger();
+    public record Configuration(
+            String driverClassName,
+            String connectionString,
+            String user,
+            String password
+    ) {
+    }
 
     private Connection connection = null;
 
-    public DatabaseRelationImpl() {
+    public DatabaseRelationImpl(Configuration configuration) {
         try {
-            Class.forName("org.h2.Driver");
+            Class.forName(configuration.driverClassName);
 
-            System.out.println("Connecting to database...");
+            logger.info("Connecting to database...");
 
             var jdbc = new JdbcDataSource();
-            jdbc.setURL("jdbc:h2:./h2db;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE");
-            jdbc.setUser("test");
-            jdbc.setPassword("test");
+            jdbc.setURL(configuration.connectionString);
+            jdbc.setUser(configuration.user);
+            jdbc.setPassword(configuration.password);
             connection = jdbc.getConnection();
         } catch (Exception e) {
             e.printStackTrace();
             System.err.println(e.getClass().getName() + ": " + e.getMessage());
             System.exit(0);
         }
-        System.out.println("Connecting database successfully");
-
-
-        System.out.println("Creating table in given database...");
-        try(Statement stmt = connection.createStatement()) {
-            String sql = "CREATE TABLE IF NOT EXISTS Account   " +
-                    "(id bigint auto_increment, " +
-                    " login VARCHAR(256), " +
-                    " password VARCHAR(256), " +
-                    " primary key ( id ))";
-            stmt.execute(sql);
-        }
-        catch (SQLException e){
-            e.printStackTrace();
-        }
+        logger.info("Connecting database successfully");
     }
 
 

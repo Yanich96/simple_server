@@ -4,7 +4,7 @@ public class UserProfile {
     private final String login;
     private final String password;
 
-    UserProfile(String login, String password)
+    public UserProfile(String login, String password)
     {
         this.login = login;
         this.password = password;
@@ -19,4 +19,11 @@ public class UserProfile {
     {
         return this.password;
     }
+
+
+    public boolean equals(UserProfile user)
+    {
+        return login.equals(user.getLogin()) && password.equals(user.getPassword());
+    }
+
 }

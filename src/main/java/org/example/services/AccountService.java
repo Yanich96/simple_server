@@ -1,4 +1,7 @@
-package org.example;
+package org.example.services;
+
+
+import org.example.UserProfile;
 
 public interface AccountService {
     void addNewUser(UserProfile userProfile);

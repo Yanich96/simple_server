@@ -1,14 +1,20 @@
-package org.example;
+package org.example.servlets;
 
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.example.Context;
+import org.example.UserProfile;
+import org.example.services.AccountService;
 
 public class SignUpServlet extends HttpServlet {
+
     private final AccountService accountService;
 
 
-    SignUpServlet() {
+    public SignUpServlet() {
         this.accountService = Context.getContext().get(AccountService.class);
     }
 

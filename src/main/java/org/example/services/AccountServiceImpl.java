@@ -1,6 +1,8 @@
-package org.example;
+package org.example.services;
 
-import java.sql.SQLException;
+import org.example.database.AccountRepository;
+import org.example.Context;
+import org.example.UserProfile;
 
 
 public class AccountServiceImpl implements AccountService {
