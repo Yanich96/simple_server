@@ -33,9 +33,12 @@ public class AccountServiceImplTest {
     public void findByLoginTest()
     {
         UserProfile userProfile = new UserProfile("fryChicken11", "qwerty11");
+        Assert.assertFalse(accountService.authenticate(userProfile));
         mockAccountRepository.save(userProfile);
-        Assert.assertTrue(userProfile.equals(mockAccountRepository.findByLogin("fryChicken11")));
+        Assert.assertTrue(accountService.authenticate(userProfile));
+
         UserProfile userProfile2 = new UserProfile("Chicken", "qwerty123");
+        Assert.assertFalse(accountService.authenticate(userProfile2));
         mockAccountRepository.save(userProfile2);
         Assert.assertTrue(accountService.authenticate(userProfile2));
         Assert.assertTrue(accountService.authenticate(userProfile));
