@@ -1,20 +1,22 @@
 package org.example.database;
 
+import jakarta.annotation.PostConstruct;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.example.Context;
 import org.example.UserProfile;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.sql.SQLException;
-
+@Component
 public class AccountRepositoryImpl implements AccountRepository{
     private static final Logger logger = LogManager.getLogger();
 
-    private Database database = null;
+    @Autowired
+    private Database database;
 
-    public AccountRepositoryImpl() {
-        this.database = Context.getContext().get(Database.class);
-
+    @PostConstruct
+    public void initialize() {
         createTableIfNotExists();
     }
 

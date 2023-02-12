@@ -1,16 +1,14 @@
 package org.example.services;
 
 import org.example.database.AccountRepository;
-import org.example.Context;
 import org.example.UserProfile;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
-
+@Component
 public class AccountServiceImpl implements AccountService {
-    private final AccountRepository accountRepository;
-
-    public AccountServiceImpl() {
-        this.accountRepository = Context.getContext().get(AccountRepository.class);
-    }
+    @Autowired
+    private AccountRepository accountRepository;
 
     @Override
     public void addNewUser(UserProfile userProfile) {

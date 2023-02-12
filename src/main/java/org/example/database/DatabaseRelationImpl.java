@@ -4,11 +4,14 @@ package org.example.database;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.h2.jdbcx.JdbcDataSource;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.sql.*;
-
+@Component
 public class DatabaseRelationImpl implements Database {
     private static final Logger logger = LogManager.getLogger();
+
     public record Configuration(
             String driverClassName,
             String connectionString,
@@ -19,6 +22,7 @@ public class DatabaseRelationImpl implements Database {
 
     private Connection connection = null;
 
+    @Autowired
     public DatabaseRelationImpl(Configuration configuration) {
         try {
             Class.forName(configuration.driverClassName);

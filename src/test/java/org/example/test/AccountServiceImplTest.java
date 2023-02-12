@@ -1,37 +1,47 @@
-import mocks.MockAccountRepository;
-import org.example.Context;
+package org.example.test;
+
+import org.example.test.mocks.MockAccountRepository;
 import org.example.UserProfile;
-import org.example.database.AccountRepository;
 import org.example.services.AccountService;
 import org.example.services.AccountServiceImpl;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+
+@ContextConfiguration(
+        classes = {
+                MockAccountRepository.class,
+                AccountServiceImpl.class,
+        }
+)
+@RunWith(SpringJUnit4ClassRunner.class)
 public class AccountServiceImplTest {
+    @Autowired
     AccountService accountService;
-    MockAccountRepository mockAccountRepository = new MockAccountRepository();
-
+    @Autowired
+    MockAccountRepository mockAccountRepository;
 
     @Before
-    public void init(){
-        Context.getContext().put(AccountRepository.class, mockAccountRepository);
-        accountService = new AccountServiceImpl();
-    };
+    public void init()
+    {
+        mockAccountRepository.reset();
+    }
 
     @Test
-    public void addNewUserTest()
-    {
+    public void addNewUserTest() {
         UserProfile userProfile = new UserProfile("fryChicken", "qwerty");
         Assert.assertEquals(0, mockAccountRepository.countUsers());
         accountService.addNewUser(userProfile);
         Assert.assertEquals(1, mockAccountRepository.countUsers());
-
     }
 
     @Test
-    public void findByLoginTest()
-    {
+    public void findByLoginTest() {
         UserProfile userProfile = new UserProfile("fryChicken11", "qwerty11");
         Assert.assertFalse(accountService.authenticate(userProfile));
         mockAccountRepository.save(userProfile);
