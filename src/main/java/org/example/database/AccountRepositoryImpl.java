@@ -1,67 +1,51 @@
 package org.example.database;
 
-import jakarta.annotation.PostConstruct;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.example.UserProfile;
+import org.example.exceptions.ConflictUniqueNameException;
+import org.example.exceptions.LoginConflictException;
+import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.sql.SQLException;
 @Component
-public class AccountRepositoryImpl implements AccountRepository{
+public class AccountRepositoryImpl implements AccountRepository {
     private static final Logger logger = LogManager.getLogger();
 
     @Autowired
     private Database database;
 
-    @PostConstruct
-    public void initialize() {
-        createTableIfNotExists();
-    }
-
-    private void createTableIfNotExists() {
-        String sql = "CREATE TABLE IF NOT EXISTS Account   " + "(id bigint auto_increment, " + " login VARCHAR(256), " + " password VARCHAR(256), " + " primary key ( id ))";
-        logger.info("Table creating...");
-        try {
-            database.execute(sql);
-            logger.info("Table created");
-        }
-        catch (Exception e)
-        {
-            logger.error(e);
-            throw e;
-        }
-
-    }
 
     @Override
     public void save(UserProfile entity) {
-        String sql = "INSERT INTO Account (login, password) " + "VALUES ( '" + entity.getLogin() + "','" + entity.getPassword() + "')";
         logger.info("Starting insert user into table...");
         try {
-            database.execute(sql);
-            logger.info("Inserted successfully");
+            database.persist(entity);
+            logger.info("User " + entity.getLogin() + " inserted successfully");
+        } catch (ConstraintViolationException e) {
+            throw new LoginConflictException(entity.getLogin());
         }
-        catch (Exception e)
-        {
-            logger.error(e);
-            throw e;
-        }
-
     }
+
     @Override
     public UserProfile findByLogin(String login) {
-        String sql = "SELECT login, password FROM Account WHERE login='" + login + "'";
+        String hql = "from UserProfile where login = :login";
         logger.info("Selecting user");
-        return database.fetch(sql, resultSet -> {
-            try {
-                logger.info("Selected successfully");
-                return new UserProfile(resultSet.getString("login"), resultSet.getString("password"));
-            } catch (SQLException e) {
-                logger.error(e);
-                throw new RuntimeException(e);
-            }
+        var users = database.execute(session -> {
+            return session.createQuery(hql)
+                    .setParameter("login", login)
+                    .list();
         });
+
+        if (users.size() > 1)
+            throw new ConflictUniqueNameException("login");
+        if (users.isEmpty())
+        {
+            logger.info("There is not user in Table");
+            return null;
+        }
+        logger.info("User is selected");
+        return (UserProfile)users.get(0);
     }
 }

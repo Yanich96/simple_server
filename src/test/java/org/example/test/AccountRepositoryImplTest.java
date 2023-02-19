@@ -1,9 +1,11 @@
 package org.example.test;
 
+import org.example.SessionFactoryConfiguration;
 import org.example.SpringContextConfiguration;
 import org.example.UserProfile;
 import org.example.database.AccountRepositoryImpl;
 import org.example.database.DatabaseRelationImpl;
+import org.example.exceptions.LoginConflictException;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -15,7 +17,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
         classes = {
                 AccountRepositoryImpl.class,
                 DatabaseRelationImpl.class,
-                SpringContextConfiguration.class
+                SpringContextConfiguration.class,
+                SessionFactoryConfiguration.class
         }
 )
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -29,5 +32,8 @@ public class AccountRepositoryImplTest {
         Assert.assertNull(accountRepository.findByLogin(user.getLogin()));
         accountRepository.save(user);
         Assert.assertTrue(user.equals(accountRepository.findByLogin(user.getLogin())));
+        Assert.assertThrows(LoginConflictException.class, ()->{
+            accountRepository.save(new UserProfile("Cat", "0809"));
+        });
     }
 }

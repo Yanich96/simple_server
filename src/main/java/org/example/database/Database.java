@@ -1,12 +1,14 @@
 package org.example.database;
 
-import java.sql.ResultSet;
+import org.hibernate.Session;
+
+import java.util.List;
 
 public interface Database {
-    interface ResultMapper<T> {
-        T map(ResultSet resultSet);
+    interface Handler<T> {
+        List<T> handle(Session session);
     }
-    boolean execute(String sql);
-    <T> T fetch(String sql, ResultMapper<T> mapper);
+    void persist(Object entity);
+    <T> List<T> execute(Handler<T> handler);
 
 }

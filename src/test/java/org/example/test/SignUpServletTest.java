@@ -2,6 +2,7 @@ package org.example.test;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.example.SessionFactoryConfiguration;
 import org.example.test.mocks.MockAccountRepository;
 import org.example.services.AccountServiceImpl;
 import org.example.servlets.SignUpServlet;
@@ -17,7 +18,8 @@ import static org.mockito.Mockito.*;
         classes = {
                 MockAccountRepository.class,
                 AccountServiceImpl.class,
-                SignUpServlet.class
+                SignUpServlet.class,
+                SessionFactoryConfiguration.class
         }
 )
 @RunWith(SpringJUnit4ClassRunner.class)

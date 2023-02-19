@@ -1,5 +1,6 @@
 package org.example.test;
 
+import org.example.SessionFactoryConfiguration;
 import org.example.test.mocks.MockAccountRepository;
 import org.example.UserProfile;
 import org.example.services.AccountService;
@@ -17,6 +18,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
         classes = {
                 MockAccountRepository.class,
                 AccountServiceImpl.class,
+                SessionFactoryConfiguration.class
         }
 )
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -36,7 +38,7 @@ public class AccountServiceImplTest {
     public void addNewUserTest() {
         UserProfile userProfile = new UserProfile("fryChicken", "qwerty");
         Assert.assertEquals(0, mockAccountRepository.countUsers());
-        accountService.addNewUser(userProfile);
+        accountService.signUpNewUser(userProfile);
         Assert.assertEquals(1, mockAccountRepository.countUsers());
     }
 
