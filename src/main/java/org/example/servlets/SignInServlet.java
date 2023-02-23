@@ -1,6 +1,5 @@
 package org.example.servlets;
 
-import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.apache.logging.log4j.LogManager;
@@ -14,7 +13,7 @@ import java.io.IOException;
 
 
 @Component
-public class SignInServlet extends HttpServlet {
+public class SignInServlet extends BaseServlet {
     private static final Logger logger = LogManager.getLogger();
 
     @Autowired
@@ -25,17 +24,21 @@ public class SignInServlet extends HttpServlet {
         String login = req.getParameter("login");
         String password = req.getParameter("password");
         UserProfile user = new UserProfile(login, password);
-        boolean registered = accountService.authenticate(user);
-        if(registered) {
+        String sessionId = accountService.authenticate(user);
+        if (sessionId != null) {
             logger.info("User " + login + " authorized");
+            resp.getWriter().println("SessionId: " + sessionId);
             resp.getWriter().print("Authorized: " + login);
-        }
-        else
-        {
-            logger.info("User "+login+" unauthorized");
+        } else {
+            logger.info("User " + login + " unauthorized");
             resp.getWriter().print("Unauthorized");
             resp.setStatus(401);
         }
         resp.getWriter().flush();
+    }
+
+    @Override
+    public String uri() {
+        return "/signin";
     }
 }

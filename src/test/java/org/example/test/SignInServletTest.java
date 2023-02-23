@@ -7,6 +7,7 @@ import org.example.UserProfile;
 import org.example.services.AccountServiceImpl;
 import org.example.servlets.SignInServlet;
 import org.example.test.mocks.MockAccountRepository;
+import org.example.test.mocks.MockSessionStorage;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -18,14 +19,15 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintWriter;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
+
 @ContextConfiguration(
         classes = {
                 MockAccountRepository.class,
                 AccountServiceImpl.class,
                 SignInServlet.class,
-                SessionFactoryConfiguration.class
+                SessionFactoryConfiguration.class,
+                MockSessionStorage.class
         }
 )
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -34,12 +36,15 @@ public class SignInServletTest {
     MockAccountRepository mockAccountRepository;
     @Autowired
     SignInServlet servlet;
+    @Autowired
+    MockSessionStorage mockSessionStorage;
 
     @Before
-    public void init(){
-        UserProfile user = new UserProfile("Loki","rtyu2345");
+    public void init() {
+        mockAccountRepository.reset();
+        UserProfile user = new UserProfile("Loki", "rtyu2345");
         mockAccountRepository.save(user);
-    };
+    }
 
     @Test
     public void doPostAuthorizedTest() throws Exception {
@@ -52,9 +57,8 @@ public class SignInServletTest {
         PrintWriter writer = new PrintWriter(line);
         when(response.getWriter()).thenReturn(writer);
         servlet.doPost(request, response);
-        Assert.assertEquals("Authorized: "+login, line.toString());
+        verify(response, times(0)).setStatus(401);
     }
-
 
     @Test
     public void doPostUnauthorizedTest() throws Exception {
@@ -67,5 +71,6 @@ public class SignInServletTest {
         when(response.getWriter()).thenReturn(writer);
         servlet.doPost(request, response);
         Assert.assertEquals("Unauthorized", line.toString());
+        verify(response, times(1)).setStatus(401);
     }
 }

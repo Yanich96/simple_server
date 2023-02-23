@@ -10,13 +10,12 @@ import org.springframework.context.annotation.Configuration;
 public class SessionFactoryConfiguration {
 
     @PreDestroy
-    void destroy()
-    {
+    void destroy() {
         sessionFactory().close();
     }
+
     @Bean
-    SessionFactory sessionFactory()
-    {
+    SessionFactory sessionFactory() {
         return new org.hibernate.cfg.Configuration()
                 .addAnnotatedClass(UserProfile.class)
                 .configure("hibernate.cfg.xml")

@@ -18,7 +18,6 @@ public class SpringContextConfiguration {
     @Value("${database.password}")
     String password;
 
-
     @Bean
     DatabaseRelationImpl.Configuration databaseConfiguration() {
         return new DatabaseRelationImpl.Configuration(

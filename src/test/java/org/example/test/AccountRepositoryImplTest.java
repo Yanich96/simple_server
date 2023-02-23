@@ -32,7 +32,7 @@ public class AccountRepositoryImplTest {
         Assert.assertNull(accountRepository.findByLogin(user.getLogin()));
         accountRepository.save(user);
         Assert.assertTrue(user.equals(accountRepository.findByLogin(user.getLogin())));
-        Assert.assertThrows(LoginConflictException.class, ()->{
+        Assert.assertThrows(LoginConflictException.class, () -> {
             accountRepository.save(new UserProfile("Cat", "0809"));
         });
     }

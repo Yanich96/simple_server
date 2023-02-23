@@ -8,7 +8,8 @@ public interface Database {
     interface Handler<T> {
         List<T> handle(Session session);
     }
-    void persist(Object entity);
-    <T> List<T> execute(Handler<T> handler);
 
+    void persist(Object entity);
+
+    <T> List<T> execute(Handler<T> handler);
 }

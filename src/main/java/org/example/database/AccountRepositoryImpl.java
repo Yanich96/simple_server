@@ -16,7 +16,6 @@ public class AccountRepositoryImpl implements AccountRepository {
     @Autowired
     private Database database;
 
-
     @Override
     public void save(UserProfile entity) {
         logger.info("Starting insert user into table...");
@@ -33,19 +32,27 @@ public class AccountRepositoryImpl implements AccountRepository {
         String hql = "from UserProfile where login = :login";
         logger.info("Selecting user");
         var users = database.execute(session -> {
-            return session.createQuery(hql)
-                    .setParameter("login", login)
-                    .list();
+            return session.createQuery(hql).setParameter("login", login).list();
         });
 
-        if (users.size() > 1)
-            throw new ConflictUniqueNameException("login");
-        if (users.isEmpty())
-        {
+        if (users.size() > 1) throw new ConflictUniqueNameException("login");
+        if (users.isEmpty()) {
             logger.info("There is not user in Table");
             return null;
         }
         logger.info("User is selected");
-        return (UserProfile)users.get(0);
+        return (UserProfile) users.get(0);
+    }
+
+    @Override
+    public void changePassword(long id, String password) {
+        logger.info("Starting update user password into table...");
+        String hql = "update UserProfile u set u.password =: password where id = :id";
+        database.execute(session -> {
+            session.createQuery(hql)
+                    .setParameter("id", id)
+                    .setParameter("password", password).executeUpdate();
+            return null;
+        });
     }
 }
