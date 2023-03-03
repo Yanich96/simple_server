@@ -8,4 +8,6 @@ public interface AccountService {
     String authenticate(UserProfile userProfile);
 
     void changePassword(String sessionId, String password);
+
+    long getId(String sessionId);
 }

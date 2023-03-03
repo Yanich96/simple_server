@@ -56,4 +56,17 @@ public class AccountServiceImpl implements AccountService {
         logger.info("User Id was gotten successfully");
         accountRepository.changePassword(userId, password);
     }
+
+    @Override
+    public long getId(String sessionId){
+        logger.info("Getting the user Id..");
+        String session = sessionStorage.getUserId(sessionId);
+        if (session == null) {
+            logger.info("User Id was not found");
+            throw new SessionNotFoundException("Session was not found");
+        }
+        long userId = Long.parseLong(session);
+        logger.info("User Id was gotten successfully");
+        return userId;
+    }
 }

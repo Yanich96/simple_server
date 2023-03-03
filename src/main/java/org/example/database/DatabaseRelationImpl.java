@@ -16,15 +16,6 @@ public class DatabaseRelationImpl implements Database {
     @Autowired
     private SessionFactory sessions;
 
-    public record Configuration(
-            String driverClassName,
-            String connectionString,
-            String user,
-            String password
-    ) {
-    }
-
-
     @Override
     public void persist(Object entity) {
         Session session = sessions.getCurrentSession();

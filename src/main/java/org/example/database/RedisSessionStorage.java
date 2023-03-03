@@ -6,16 +6,15 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
 import redis.clients.jedis.Jedis;
 
-@Component
-@PropertySource({"/redis.properties"})
-public class RedisSessionStorage implements SessionStorage {
+import java.net.URI;
 
-    @Value("${redis.host}")
-    String host;
-    @Value("${redis.port}")
-    String port;
+@Component
+@PropertySource({"redis.properties"})
+public class RedisSessionStorage implements SessionStorage {
     @Value("${redis.sessionTimeOutSek}")
     String timeOut;
+    @Value(("${redis.url}"))
+    String url;
 
     Jedis jedis = null;
 
@@ -24,7 +23,7 @@ public class RedisSessionStorage implements SessionStorage {
 
     @PostConstruct
     void initialise() {
-        jedis = new Jedis(host, Integer.parseInt(port));
+        jedis = new Jedis(URI.create(url));
     }
 
     @Override
